@@ -13,8 +13,26 @@ from linebot.v3.messaging import (
     ReplyMessageRequest,
     TextMessage,
     TemplateMessage,
+    ConfirmTemplate,
     ButtonsTemplate,
-    PostbackAction
+    CarouselTemplate,
+    CarouselColumn,
+    ImageCarouselColumn,
+    ImageCarouselTemplate,
+    MessageAction,
+    URIAction,
+    PostbackAction,
+    DatetimePickerAction,
+    FlexMessage,
+
+    FlexImage,
+    FlexBubble,
+    FlexBox,
+    FlexText,
+    FlexIcon,
+    FlexButton,
+    FlexSeparator,
+    FlexContainer
 )
 from linebot.v3.webhooks import (
     MessageEvent,
@@ -22,10 +40,12 @@ from linebot.v3.webhooks import (
     PostbackEvent,
     TextMessageContent
 )
-
+import json
 import os
 
 app = Flask(__name__)
+
+user_states = {}
 
 configuration = Configuration(access_token=os.getenv('CHANNEL_ACCESS_TOKEN'))
 line_handler = WebhookHandler(os.getenv('CHANNEL_SECRET'))
@@ -48,23 +68,197 @@ def callback():
         abort(400)
 
     return 'OK'
-
+        
 
 @line_handler.add(MessageEvent, message=TextMessageContent)
 def handle_message(event):
+    text = event.message.text
+    user_id = event.source.user_id  # 取得 user ID
     with ApiClient(configuration) as api_client:
         line_bot_api = MessagingApi(api_client)
-        line_bot_api.reply_message_with_http_info(
-            ReplyMessageRequest(
-                reply_token=event.reply_token,
-                messages=[TextMessage(text=event.message.text)]
+        # 如果沒有記錄過這個使用者，建立初始狀態
+        if user_id not in user_states:
+            user_states[user_id] = {"step": 0}
+        
+        step = user_states[user_id]["step"]
+
+        if text == '申請報修':
+            user_states[user_id]["step"] = 1
+            confirm_template = ConfirmTemplate(
+                text = '是否有會員？',
+                actions = [
+                    MessageAction(label = 'Yes' , text = '是'),
+                    MessageAction(label = 'No' , text = '否'),
+                ]
             )
-        )
+            template_message = TemplateMessage(
+                alt_text = '請先登入會員',
+                template = confirm_template
+            )
+            line_bot_api.reply_message(
+                ReplyMessageRequest(
+                    reply_token=event.reply_token,
+                    messages=[template_message]
+                )
+            )
+        elif step == 1:
+            if text == '是':
+                # 使用者登入會員 → 回傳 shipTemplate，請他選擇送修方式
+                user_states[user_id]["step"] = 2
+                ship_template = ButtonsTemplate(
+                    title='送修方式',
+                    text='想要如何送修？',
+                    actions=[
+                        MessageAction(label='百貨專櫃', text='送至百貨專櫃'),
+                        MessageAction(label='到府收貨', text='請人員到府收貨'),
+                        MessageAction(label='自行送修', text='自行送修'),
+                    ]
+                )
+                template_message = TemplateMessage(
+                    alt_text='如何送修',
+                    template=ship_template
+                )
+                line_bot_api.reply_message(
+                    ReplyMessageRequest(
+                        reply_token=event.reply_token,
+                        messages=[template_message]
+                    )
+                )
+            else:
+                line_bot_api.reply_message(
+                    ReplyMessageRequest(
+                        reply_token=event.reply_token,
+                        messages=[TextMessage(text='請重新登入會員')]
+                    )
+                )
+                user_states[user_id]["step"] = 0
+        elif step == 2:
+            if text == '送至百貨專櫃':
+                user_states[user_id]["step"] = 3
+                shop_json = {
+                "type": "bubble",
+                "hero": {
+                    "type": "image",
+                    "url": "https://www.vastar.com.tw/imagess/1021092923_19027BC02p1.jpg",
+                    "size": "full",
+                    "aspectRatio": "20:13",
+                    "aspectMode": "cover",
+                    "action": {
+                    "type": "uri",
+                    "uri": "https://line.me/"
+                    }
+                },
+                "body": {
+                    "type": "box",
+                    "layout": "vertical",
+                    "contents": [
+                    {
+                        "type": "text",
+                        "text": "Sogo天母店 6F",
+                        "weight": "bold",
+                        "size": "xl"
+                    },
+                    {
+                        "type": "box",
+                        "layout": "baseline",
+                        "margin": "md",
+                        "contents": []
+                    },
+                    {
+                        "type": "box",
+                        "layout": "vertical",
+                        "margin": "lg",
+                        "spacing": "sm",
+                        "contents": [
+                        {
+                            "type": "box",
+                            "layout": "baseline",
+                            "spacing": "sm",
+                            "contents": [
+                            {
+                                "type": "text",
+                                "text": "Place",
+                                "color": "#aaaaaa",
+                                "size": "sm",
+                                "flex": 1
+                            },
+                            {
+                                "type": "text",
+                                "text": "台北市士林區中山北路六段77號",
+                                "wrap": True,
+                                "color": "#666666",
+                                "size": "sm",
+                                "flex": 5
+                            }
+                            ]
+                        },
+                        {
+                            "type": "box",
+                            "layout": "baseline",
+                            "spacing": "sm",
+                            "contents": [
+                            {
+                                "type": "text",
+                                "text": "Time",
+                                "color": "#aaaaaa",
+                                "size": "sm",
+                                "flex": 1
+                            },
+                            {
+                                "type": "text",
+                                "text": "11:00 - 21:30",
+                                "wrap": True,
+                                "color": "#666666",
+                                "size": "sm",
+                                "flex": 5
+                            }
+                            ]
+                        }
+                        ]
+                    }
+                    ]
+                },
+                "footer": {
+                    "type": "box",
+                    "layout": "vertical",
+                    "spacing": "sm",
+                    "contents": [
+                    {
+                        "type": "button",
+                        "style": "link",
+                        "height": "sm",
+                        "action": {
+                        "type": "uri",
+                        "label": "Map",
+                        "uri": "https://maps.app.goo.gl/GYzP9e3gkVPAoUqs9"
+                        }
+                    },
+                    {
+                        "type": "box",
+                        "layout": "vertical",
+                        "contents": [],
+                        "margin": "sm"
+                    }
+                    ],
+                    "flex": 0
+                }
+                }
+                shop_json_str = json.dumps(shop_json)
+                line_bot_api.reply_message(
+                    ReplyMessageRequest(
+                        reply_token=event.reply_token,
+                        messages=[FlexMessage(alt_text='專櫃資訊', contents = FlexContainer.from_json(shop_json_str))]
+                    )
+                )
+                
+
 
 #followevent 加入好友
 @line_handler.add(FollowEvent)
 def handle_follow(event):
     print(f'Got {event.type} event')
+
+
 
 if __name__ == "__main__":
     app.run()
