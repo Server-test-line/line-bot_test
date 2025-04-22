@@ -52,12 +52,41 @@ def callback():
 
 @line_handler.add(MessageEvent, message=TextMessageContent)
 def handle_message(event):
+    user_text = event.message.text
+
+    # 判斷是否為登入格式，例如：帳號:xxx 密碼:yyy
+    if '帳號:' in user_text and '密碼:' in user_text:
+        try:
+            account = user_text.split('帳號:')[1].split(' 密碼:')[0].strip()
+            password = user_text.split('密碼:')[1].strip()
+
+            # 呼叫驗證 API
+            import requests
+            url = "https://webapi.vastar.com.tw/api/Member/HASHBYTES"
+            payload = {"Account": account, "Password": password}
+            headers = {"Content-Type": "application/json"}
+
+            res = requests.post(url, json=payload, headers=headers)
+            result = res.json()
+
+            # 根據回傳結果決定訊息
+            if result['Result'] == 1:
+                reply_text = f"✅ 登入成功！歡迎 {account}"
+            else:
+                reply_text = "❌ 帳號或密碼錯誤，請再試一次！"
+
+        except Exception as e:
+            reply_text = f"⚠️ 發生錯誤：{str(e)}"
+    else:
+        reply_text = "請輸入：帳號:你的帳號 密碼:你的密碼"
+
+    # 回覆訊息
     with ApiClient(configuration) as api_client:
         line_bot_api = MessagingApi(api_client)
         line_bot_api.reply_message_with_http_info(
             ReplyMessageRequest(
                 reply_token=event.reply_token,
-                messages=[TextMessage(text=event.message.text)]
+                messages=[TextMessage(text=reply_text)]
             )
         )
 
