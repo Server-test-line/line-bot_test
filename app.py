@@ -24,12 +24,23 @@ from linebot.v3.webhooks import (
 )
 
 import os
+import requests
+import firebase_admin
+from firebase_admin import credentials, firestore
 
 app = Flask(__name__)
 
 configuration = Configuration(access_token=os.getenv('CHANNEL_ACCESS_TOKEN'))
 line_handler = WebhookHandler(os.getenv('CHANNEL_SECRET'))
 
+# 初始化 Firebase
+cred = credentials.Certificate({
+    "type": "service_account",
+    "project_id": os.environ["FIREBASE_PROJECT_ID"],
+    "private_key": os.environ["FIREBASE_PRIVATE_KEY"].replace('\\n', '\n'),
+    "client_email": os.environ["FIREBASE_CLIENT_EMAIL"]
+})
+firebase_admin.initialize_app(cred)
 
 @app.route("/callback", methods=['POST'])##銜接webhook
 def callback():
@@ -60,17 +71,8 @@ def handle_message(event):
             account = user_text.split('帳號:')[1].split(' 密碼:')[0].strip()
             password = user_text.split('密碼:')[1].strip()
 
-            # 呼叫驗證 API
-            import requests
-            url = "https://webapi.vastar.com.tw/api/Member/HASHBYTES"
-            payload = {"Account": account, "Password": password}
-            headers = {"Content-Type": "application/json"}
-
-            res = requests.post(url, json=payload, headers=headers)
-            result = res.json()
-
-            # 根據回傳結果決定訊息
-            if result['Result'] == 1:
+            # 檢查 Firebase 資料庫中的帳號和密碼
+            if check_user(account, password):
                 reply_text = f"✅ 登入成功！歡迎 {account}"
             else:
                 reply_text = "❌ 帳號或密碼錯誤，請再試一次！"
@@ -89,6 +91,7 @@ def handle_message(event):
                 messages=[TextMessage(text=reply_text)]
             )
         )
+
 
 #followevent 加入好友
 @line_handler.add(FollowEvent)
