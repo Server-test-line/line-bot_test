@@ -104,7 +104,7 @@ def handle_message(event):
         elif step == 1:
             if text == '是':
                 # 使用者登入會員 → 回傳 shipTemplate，請他選擇送修方式
-                login_url = "https://line-bot-test-tau.vercel.app/login.html"
+                login_url = "https://line-bot-test-git-main-server-tests-projects.vercel.app/login.html"
                 button_template = ButtonsTemplate(
                     title='請點擊此連結登入',
                     text='點擊下方按鈕進行登入',
