@@ -756,7 +756,7 @@ def handle_message(event):
                 user_states[user_id]["step"] = 0
 
         if text == '報修查詢':
-            user_states[user_id]["step"] = 1
+            user_states[user_id]["step"] = 4
             confirm_template = ConfirmTemplate(
                 text = '是否有會員？',
                 actions = [
@@ -774,11 +774,11 @@ def handle_message(event):
                     messages=[template_message]
                 )
             )
-        elif step == 1:
+        elif step == 4:
             if text == '是':
                 # 登入後列出維修資料
                 
-                user_states[user_id]["step"] = 2
+                user_states[user_id]["step"] = 5
 
             else:
                 line_bot_api.reply_message(
@@ -790,7 +790,7 @@ def handle_message(event):
                 user_states[user_id]["step"] = 0
 
         if text == '會員登入':
-            user_states[user_id]["step"] = 1
+            user_states[user_id]["step"] = 5
             confirm_template = ConfirmTemplate(
                 text = '是否有會員？',
                 actions = [
@@ -808,11 +808,11 @@ def handle_message(event):
                     messages=[template_message]
                 )
             )
-        elif step == 1:
+        elif step == 5:
             if text == '是':
                 # 登入功能
                 
-                user_states[user_id]["step"] = 2
+                user_states[user_id]["step"] = 6
 
             else:
                 line_bot_api.reply_message(
