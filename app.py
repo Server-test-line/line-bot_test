@@ -102,7 +102,7 @@ def handle_message(event):
                 )
             )
         elif step == 1:
-            if text == '是':
+            if '是' in text:
                 # 使用者登入會員 → 回傳 shipTemplate，請他選擇送修方式
                 ship_template = ButtonsTemplate(
                     title='送修方式',
@@ -135,7 +135,7 @@ def handle_message(event):
                 user_states[user_id]["step"] = 0
         
         elif step == 2:
-            if text == '送至百貨專櫃':
+            if '百貨' in text:
                 ship_template = ButtonsTemplate(
                 title='百貨專櫃',
                 text='分店資訊',
@@ -158,7 +158,7 @@ def handle_message(event):
                 )
                 user_states[user_id]["step"] = 3
 
-            elif text == '請人員到府收貨':
+            elif '到府' in text:
                 line_bot_api.reply_message(
                     ReplyMessageRequest(
                         reply_token=event.reply_token,
@@ -167,7 +167,7 @@ def handle_message(event):
                 )
                 user_states[user_id]["step"] = 0
 
-            elif text == '自行送修':
+            elif '自行' in text:
                 company_json = {
                     "type": "bubble",
                     "hero": {
@@ -286,7 +286,7 @@ def handle_message(event):
                 user_states[user_id]["step"] = 0
 
         elif step == 3:
-            if text == '臺北SOGO天母店':
+            if '天母' in text:
                 shop_json = {
                     "type": "bubble",
                     "hero": {
@@ -403,7 +403,7 @@ def handle_message(event):
                     )
                 )
                 user_states[user_id]["step"] = 0
-            elif text == '臺北SOGO忠孝店':
+            elif '忠孝' in text:
                 shop_json = {
                     "type": "bubble",
                     "hero": {
@@ -520,7 +520,7 @@ def handle_message(event):
                     )
                 )
                 user_states[user_id]["step"] = 0
-            elif text == '臺北遠東信義A13':
+            elif '信義' in text:
                 shop_json = {
                     "type": "bubble",
                     "hero": {
@@ -637,7 +637,7 @@ def handle_message(event):
                     )
                 )
                 user_states[user_id]["step"] = 0
-            elif text == '高雄SOGO高雄店':
+            elif '高雄' in text:
                 shop_json = {
                     "type": "bubble",
                     "hero": {
@@ -755,7 +755,7 @@ def handle_message(event):
                 )
                 user_states[user_id]["step"] = 0
 
-        if text == '報修查詢':
+        if '查詢' in text:
             user_states[user_id]["step"] = 4
             confirm_template = ConfirmTemplate(
                 text = '是否有會員？',
@@ -775,7 +775,7 @@ def handle_message(event):
                 )
             )
         elif step == 4:
-            if text == '是':
+            if '是' in text:
                 # 登入後列出維修資料
                 
                 user_states[user_id]["step"] = 5
@@ -789,7 +789,7 @@ def handle_message(event):
                 )
                 user_states[user_id]["step"] = 0
 
-        if text == '會員登入':
+        if '登入' in text:
             user_states[user_id]["step"] = 5
             confirm_template = ConfirmTemplate(
                 text = '是否有會員？',
@@ -809,7 +809,7 @@ def handle_message(event):
                 )
             )
         elif step == 5:
-            if text == '是':
+            if '是' in text:
                 # 登入功能
                 
                 user_states[user_id]["step"] = 6
