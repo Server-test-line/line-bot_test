@@ -82,7 +82,7 @@ def handle_message(event):
         
         step = user_states[user_id]["step"]
 
-        if text == '申請報修':
+        if '報修' in text:
             user_states[user_id]["step"] = 1
             confirm_template = ConfirmTemplate(
                 text = '是否有會員？',
