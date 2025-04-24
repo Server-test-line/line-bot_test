@@ -106,21 +106,10 @@ def handle_message(event):
                 # 使用者登入會員 → 回傳 shipTemplate，請他選擇送修方式
                 login_url = "https://line-login-site.vercel.app/"  # Firebase 登入頁面網址
 
-                # 回傳一個按鈕，點擊後打開登入頁面
                 line_bot_api.reply_message(
-                    event.reply_token,
-                    TemplateSendMessage(
-                        alt_text='登入連結',
-                        template=ButtonsTemplate(
-                            title='登入會員',
-                            text='請點選下方按鈕登入會員',
-                            actions=[
-                                URITemplateAction(
-                                    label='點我登入',
-                                    uri=login_url
-                                )
-                            ]
-                        )
+                    ReplyMessageRequest(
+                        reply_token=event.reply_token,
+                        messages=[TextMessage(text=f"請點選以下連結登入會員：\n{login_url}")]
                     )
                 )
                 ship_template = ButtonsTemplate(
