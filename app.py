@@ -121,7 +121,7 @@ def handle_message(event):
                 user_states[user_id]["step"] = 0
         
         elif step == 2:
-            if text == '登入成功':
+            if TextMessage() == '登入成功':
                 user_states[user_id]["step"] = 3
                 ship_template = ButtonsTemplate(
                     title='送修方式',
