@@ -105,25 +105,7 @@ def handle_message(event):
             if text == '是':
                 # 使用者登入會員 → 回傳 shipTemplate，請他選擇送修方式
                 user_states[user_id]["step"] = 2
-                ship_template = ButtonsTemplate(
-                    title='送修方式',
-                    text='想要如何送修？',
-                    actions=[
-                        MessageAction(label='百貨專櫃', text='送至百貨專櫃'),
-                        MessageAction(label='到府收貨', text='請人員到府收貨'),
-                        MessageAction(label='自行送修', text='自行送修'),
-                    ]
-                )
-                template_message = TemplateMessage(
-                    alt_text='如何送修',
-                    template=ship_template
-                )
-                line_bot_api.reply_message(
-                    ReplyMessageRequest(
-                        reply_token=event.reply_token,
-                        messages=[template_message]
-                    )
-                )
+                
             else:
                 line_bot_api.reply_message(
                     ReplyMessageRequest(
@@ -132,116 +114,171 @@ def handle_message(event):
                     )
                 )
                 user_states[user_id]["step"] = 0
+        
         elif step == 2:
+            user_states[user_id]["step"] = 3
+            ship_template = ButtonsTemplate(
+                title='送修方式',
+                text='想要如何送修？',
+                actions=[
+                    MessageAction(label='百貨專櫃', text='送至百貨專櫃'),
+                    MessageAction(label='到府收貨', text='請人員到府收貨'),
+                    MessageAction(label='自行送修', text='自行送修'),
+                ]
+            )
+            template_message = TemplateMessage(
+                alt_text='如何送修',
+                template=ship_template
+            )
+            line_bot_api.reply_message(
+                ReplyMessageRequest(
+                    reply_token=event.reply_token,
+                    messages=[template_message]
+                )
+            )
+
+        elif step == 3:
             if text == '送至百貨專櫃':
-                user_states[user_id]["step"] = 3
+                user_states[user_id]["step"] = 4
+                ship_template = ButtonsTemplate(
+                title='百貨專櫃',
+                text='分店資訊',
+                actions=[
+                    MessageAction(label='SOGO天母店', text='臺北SOGO天母店'),
+                    MessageAction(label='SOGO忠孝店', text='SOGO忠孝店'),
+                    MessageAction(label='遠東信義A13', text='臺北遠東信義A13'),
+                    MessageAction(label='SOGO高雄店', text='高雄SOGO高雄店')
+                    ]
+                )
+                template_message = TemplateMessage(
+                    alt_text='選擇分店',
+                    template=ship_template
+                )
+                line_bot_api.reply_message(
+                    ReplyMessageRequest(
+                        reply_token=event.reply_token,
+                        messages=[template_message]
+                    )
+                )
+
+            elif text == '請人員到府收貨':
+                line_bot_api.reply_message(
+                    ReplyMessageRequest(
+                        reply_token=event.reply_token,
+                        messages=[TextMessage(text='請留下收貨地址')]
+                    )
+                )
+                user_states[user_id]["step"] = 0
+
+        elif step == 4:
+            if text == '臺北SOGO天母店':
                 shop_json = {
-                "type": "bubble",
-                "hero": {
-                    "type": "image",
-                    "url": "https://www.vastar.com.tw/imagess/1021092923_19027BC02p1.jpg",
-                    "size": "full",
-                    "aspectRatio": "20:13",
-                    "aspectMode": "cover",
-                    "action": {
-                    "type": "uri",
-                    "uri": "https://line.me/"
-                    }
-                },
-                "body": {
-                    "type": "box",
-                    "layout": "vertical",
-                    "contents": [
-                    {
-                        "type": "text",
-                        "text": "Sogo天母店 6F",
-                        "weight": "bold",
-                        "size": "xl"
+                    "type": "bubble",
+                    "hero": {
+                        "type": "image",
+                        "url": "https://www.vastar.com.tw/imagess/1021092923_19027BC02p1.jpg",
+                        "size": "full",
+                        "aspectRatio": "20:13",
+                        "aspectMode": "cover",
+                        "action": {
+                        "type": "uri",
+                        "uri": "https://line.me/"
+                        }
                     },
-                    {
-                        "type": "box",
-                        "layout": "baseline",
-                        "margin": "md",
-                        "contents": []
-                    },
-                    {
+                    "body": {
                         "type": "box",
                         "layout": "vertical",
-                        "margin": "lg",
-                        "spacing": "sm",
                         "contents": [
                         {
-                            "type": "box",
-                            "layout": "baseline",
-                            "spacing": "sm",
-                            "contents": [
-                            {
-                                "type": "text",
-                                "text": "Place",
-                                "color": "#aaaaaa",
-                                "size": "sm",
-                                "flex": 1
-                            },
-                            {
-                                "type": "text",
-                                "text": "台北市士林區中山北路六段77號",
-                                "wrap": True,
-                                "color": "#666666",
-                                "size": "sm",
-                                "flex": 5
-                            }
-                            ]
+                            "type": "text",
+                            "text": "臺北SOGO天母店",
+                            "weight": "bold",
+                            "size": "xl"
                         },
                         {
                             "type": "box",
                             "layout": "baseline",
+                            "margin": "md",
+                            "contents": []
+                        },
+                        {
+                            "type": "box",
+                            "layout": "vertical",
+                            "margin": "lg",
                             "spacing": "sm",
                             "contents": [
                             {
-                                "type": "text",
-                                "text": "Time",
-                                "color": "#aaaaaa",
-                                "size": "sm",
-                                "flex": 1
+                                "type": "box",
+                                "layout": "baseline",
+                                "spacing": "sm",
+                                "contents": [
+                                {
+                                    "type": "text",
+                                    "text": "Place",
+                                    "color": "#aaaaaa",
+                                    "size": "sm",
+                                    "flex": 1
+                                },
+                                {
+                                    "type": "text",
+                                    "text": "台北市士林區中山北路六段77號",
+                                    "wrap": true,
+                                    "color": "#666666",
+                                    "size": "sm",
+                                    "flex": 5
+                                }
+                                ]
                             },
                             {
-                                "type": "text",
-                                "text": "11:00 - 21:30",
-                                "wrap": True,
-                                "color": "#666666",
-                                "size": "sm",
-                                "flex": 5
+                                "type": "box",
+                                "layout": "baseline",
+                                "spacing": "sm",
+                                "contents": [
+                                {
+                                    "type": "text",
+                                    "text": "Time",
+                                    "color": "#aaaaaa",
+                                    "size": "sm",
+                                    "flex": 1
+                                },
+                                {
+                                    "type": "text",
+                                    "text": "11:00 - 21:30",
+                                    "wrap": true,
+                                    "color": "#666666",
+                                    "size": "sm",
+                                    "flex": 5
+                                }
+                                ]
                             }
                             ]
                         }
                         ]
-                    }
-                    ]
-                },
-                "footer": {
-                    "type": "box",
-                    "layout": "vertical",
-                    "spacing": "sm",
-                    "contents": [
-                    {
-                        "type": "button",
-                        "style": "link",
-                        "height": "sm",
-                        "action": {
-                        "type": "uri",
-                        "label": "Map",
-                        "uri": "https://maps.app.goo.gl/GYzP9e3gkVPAoUqs9"
-                        }
                     },
-                    {
+                    "footer": {
                         "type": "box",
                         "layout": "vertical",
-                        "contents": [],
-                        "margin": "sm"
+                        "spacing": "sm",
+                        "contents": [
+                        {
+                            "type": "button",
+                            "style": "link",
+                            "height": "sm",
+                            "action": {
+                            "type": "uri",
+                            "label": "MAP",
+                            "uri": "https://maps.app.goo.gl/GYzP9e3gkVPAoUqs9"
+                            }
+                        },
+                        {
+                            "type": "box",
+                            "layout": "vertical",
+                            "contents": [],
+                            "margin": "sm"
+                        }
+                        ],
+                        "flex": 0
                     }
-                    ],
-                    "flex": 0
-                }
                 }
                 shop_json_str = json.dumps(shop_json)
                 line_bot_api.reply_message(
@@ -250,7 +287,7 @@ def handle_message(event):
                         messages=[FlexMessage(alt_text='專櫃資訊', contents = FlexContainer.from_json(shop_json_str))]
                     )
                 )
-                
+            
 
 
 #followevent 加入好友
