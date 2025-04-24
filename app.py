@@ -80,13 +80,10 @@ def handle_message(event):
         if user_id not in user_states:
             user_states[user_id] = {"step": 0}
         
-        fix_step = user_states[user_id]["step"]#維修
-        search_step = user_states[user_id]["step"]#查詢
-        login_step = user_states[user_id]["step"]#登入
-        address_step = user_states[user_id]["step"]#地址
+        step = user_states[user_id]["step"]
 
         if text == '申請報修':
-            fix_step = 1
+            user_states[user_id]["step"] = 1
             confirm_template = ConfirmTemplate(
                 text = '是否有會員？',
                 actions = [
@@ -104,7 +101,7 @@ def handle_message(event):
                     messages=[template_message]
                 )
             )
-        elif fix_step == 1:
+        elif step == 1:
             if text == '是':
                 # 使用者登入會員 → 回傳 shipTemplate，請他選擇送修方式
                 ship_template = ButtonsTemplate(
@@ -126,7 +123,7 @@ def handle_message(event):
                         messages=[template_message]
                     )
                 )
-                fix_step = 2
+                user_states[user_id]["step"] = 2
 
             else:
                 line_bot_api.reply_message(
@@ -137,7 +134,7 @@ def handle_message(event):
                 )
                 user_states[user_id]["step"] = 0
         
-        elif fix_step == 2:
+        elif step == 2:
             if text == '送至百貨專櫃':
                 ship_template = ButtonsTemplate(
                 title='百貨專櫃',
@@ -159,7 +156,7 @@ def handle_message(event):
                         messages=[template_message]
                     )
                 )
-                fix_step = 3
+                user_states[user_id]["step"] = 3
 
             elif text == '請人員到府收貨':
                 line_bot_api.reply_message(
@@ -168,7 +165,7 @@ def handle_message(event):
                         messages=[TextMessage(text='請留下收貨地址')]
                     )
                 )
-                fix_step = 0
+                user_states[user_id]["step"] = 0
 
             elif text == '自行送修':
                 company_json = {
@@ -286,9 +283,9 @@ def handle_message(event):
                         messages=[FlexMessage(alt_text='總公司資訊', contents = FlexContainer.from_json(company_json_str))]
                     )
                 )
-                fix_step = 0
+                user_states[user_id]["step"] = 0
 
-        elif fix_step == 3:
+        elif step == 3:
             if text == '臺北SOGO天母店':
                 shop_json = {
                     "type": "bubble",
@@ -405,7 +402,7 @@ def handle_message(event):
                         messages=[FlexMessage(alt_text='專櫃資訊', contents = FlexContainer.from_json(shop_json_str))]
                     )
                 )
-                fix_step = 0
+                user_states[user_id]["step"] = 0
             elif text == '臺北SOGO忠孝店':
                 shop_json = {
                     "type": "bubble",
@@ -522,7 +519,7 @@ def handle_message(event):
                         messages=[FlexMessage(alt_text='專櫃資訊', contents = FlexContainer.from_json(shop_json_str))]
                     )
                 )
-                fix_step = 0
+                user_states[user_id]["step"] = 0
             elif text == '臺北遠東信義A13':
                 shop_json = {
                     "type": "bubble",
@@ -639,7 +636,7 @@ def handle_message(event):
                         messages=[FlexMessage(alt_text='專櫃資訊', contents = FlexContainer.from_json(shop_json_str))]
                     )
                 )
-                fix_step = 0
+                user_states[user_id]["step"] = 0
             elif text == '高雄SOGO高雄店':
                 shop_json = {
                     "type": "bubble",
@@ -756,7 +753,7 @@ def handle_message(event):
                         messages=[FlexMessage(alt_text='專櫃資訊', contents = FlexContainer.from_json(shop_json_str))]
                     )
                 )
-                fix_step = 0
+                user_states[user_id]["step"] = 0
 
 #followevent 加入好友
 @line_handler.add(FollowEvent)
