@@ -123,26 +123,35 @@ def handle_message(event):
                 user_states[user_id]["step"] = 0
         
         elif step == 2:
-            user_states[user_id]["step"] = 3
-            ship_template = ButtonsTemplate(
-                title='送修方式',
-                text='想要如何送修？',
-                actions=[
-                    MessageAction(label='百貨專櫃', text='送至百貨專櫃'),
-                    MessageAction(label='到府收貨', text='請人員到府收貨'),
-                    MessageAction(label='自行送修', text='自行送修'),
-                ]
-            )
-            template_message = TemplateMessage(
-                alt_text='如何送修',
-                template=ship_template
-            )
-            line_bot_api.reply_message(
-                ReplyMessageRequest(
-                    reply_token=event.reply_token,
-                    messages=[template_message]
+            if text == '登入成功':
+                user_states[user_id]["step"] = 3
+                ship_template = ButtonsTemplate(
+                    title='送修方式',
+                    text='想要如何送修？',
+                    actions=[
+                        MessageAction(label='百貨專櫃', text='送至百貨專櫃'),
+                        MessageAction(label='到府收貨', text='請人員到府收貨'),
+                        MessageAction(label='自行送修', text='自行送修'),
+                    ]
                 )
-            )
+                template_message = TemplateMessage(
+                    alt_text='如何送修',
+                    template=ship_template
+                )
+                line_bot_api.reply_message(
+                    ReplyMessageRequest(
+                        reply_token=event.reply_token,
+                        messages=[template_message]
+                    )
+                )
+            else:
+                line_bot_api.reply_message(
+                    ReplyMessageRequest(
+                        reply_token=event.reply_token,
+                        messages=[TextMessage(text='請重新選擇送修方式')]
+                    )
+                )
+                user_states[user_id]["step"] = 0
 
         elif step == 3:
             if text == '送至百貨專櫃':
