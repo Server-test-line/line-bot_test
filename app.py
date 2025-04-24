@@ -141,7 +141,7 @@ def handle_message(event):
                 text='分店資訊',
                 actions=[
                     MessageAction(label='SOGO天母店', text='臺北SOGO天母店'),
-                    MessageAction(label='SOGO忠孝店', text='SOGO忠孝店'),
+                    MessageAction(label='SOGO忠孝店', text='臺北SOGO忠孝店'),
                     MessageAction(label='遠東信義A13', text='臺北遠東信義A13'),
                     MessageAction(label='SOGO高雄店', text='高雄SOGO高雄店')
                     ]
@@ -284,9 +284,354 @@ def handle_message(event):
                         messages=[FlexMessage(alt_text='專櫃資訊', contents = FlexContainer.from_json(shop_json_str))]
                     )
                 )
-            
-
-
+            elif text == '臺北SOGO忠孝店':
+                shop_json = {
+                    "type": "bubble",
+                    "hero": {
+                        "type": "image",
+                        "url": "https://www.vastar.com.tw/imagess/1021092923_19567E8AFp1.jpg",
+                        "size": "full",
+                        "aspectRatio": "20:13",
+                        "aspectMode": "cover",
+                        "action": {
+                        "type": "uri",
+                        "uri": "https://line.me/"
+                        }
+                    },
+                    "body": {
+                        "type": "box",
+                        "layout": "vertical",
+                        "contents": [
+                        {
+                            "type": "text",
+                            "text": "臺北SOGO忠孝店",
+                            "weight": "bold",
+                            "size": "xl"
+                        },
+                        {
+                            "type": "box",
+                            "layout": "baseline",
+                            "margin": "md",
+                            "contents": []
+                        },
+                        {
+                            "type": "box",
+                            "layout": "vertical",
+                            "margin": "lg",
+                            "spacing": "sm",
+                            "contents": [
+                            {
+                                "type": "box",
+                                "layout": "baseline",
+                                "spacing": "sm",
+                                "contents": [
+                                {
+                                    "type": "text",
+                                    "text": "Place",
+                                    "color": "#aaaaaa",
+                                    "size": "sm",
+                                    "flex": 1
+                                },
+                                {
+                                    "type": "text",
+                                    "text": "台北市大安區忠孝東路四段45號",
+                                    "wrap": True,
+                                    "color": "#666666",
+                                    "size": "sm",
+                                    "flex": 5
+                                }
+                                ]
+                            },
+                            {
+                                "type": "box",
+                                "layout": "baseline",
+                                "spacing": "sm",
+                                "contents": [
+                                {
+                                    "type": "text",
+                                    "text": "Time",
+                                    "color": "#aaaaaa",
+                                    "size": "sm",
+                                    "flex": 1
+                                },
+                                {
+                                    "type": "text",
+                                    "text": "11:00 - 21:30",
+                                    "wrap": True,
+                                    "color": "#666666",
+                                    "size": "sm",
+                                    "flex": 5
+                                }
+                                ]
+                            }
+                            ]
+                        }
+                        ]
+                    },
+                    "footer": {
+                        "type": "box",
+                        "layout": "vertical",
+                        "spacing": "sm",
+                        "contents": [
+                        {
+                            "type": "button",
+                            "style": "link",
+                            "height": "sm",
+                            "action": {
+                            "type": "uri",
+                            "label": "MAP",
+                            "uri": "https://maps.app.goo.gl/3vfDt1oHGisKaYg57"
+                            }
+                        },
+                        {
+                            "type": "box",
+                            "layout": "vertical",
+                            "contents": [],
+                            "margin": "sm"
+                        }
+                        ],
+                        "flex": 0
+                    }
+                    }
+                shop_json_str = json.dumps(shop_json)
+                line_bot_api.reply_message(
+                    ReplyMessageRequest(
+                        reply_token=event.reply_token,
+                        messages=[FlexMessage(alt_text='專櫃資訊', contents = FlexContainer.from_json(shop_json_str))]
+                    )
+                )
+            elif text == '臺北遠東信義A13':
+                shop_json = {
+                    "type": "bubble",
+                    "hero": {
+                        "type": "image",
+                        "url": "https://www.vastar.com.tw/imagess/1023081221_38397C2ACp1.jpg",
+                        "size": "full",
+                        "aspectRatio": "20:13",
+                        "aspectMode": "cover",
+                        "action": {
+                        "type": "uri",
+                        "uri": "https://line.me/"
+                        }
+                    },
+                    "body": {
+                        "type": "box",
+                        "layout": "vertical",
+                        "contents": [
+                        {
+                            "type": "text",
+                            "text": "臺北遠東信義A13 8F",
+                            "weight": "bold",
+                            "size": "xl"
+                        },
+                        {
+                            "type": "box",
+                            "layout": "baseline",
+                            "margin": "md",
+                            "contents": []
+                        },
+                        {
+                            "type": "box",
+                            "layout": "vertical",
+                            "margin": "lg",
+                            "spacing": "sm",
+                            "contents": [
+                            {
+                                "type": "box",
+                                "layout": "baseline",
+                                "spacing": "sm",
+                                "contents": [
+                                {
+                                    "type": "text",
+                                    "text": "Place",
+                                    "color": "#aaaaaa",
+                                    "size": "sm",
+                                    "flex": 1
+                                },
+                                {
+                                    "type": "text",
+                                    "text": "台北市信義區松仁路58號",
+                                    "wrap": True,
+                                    "color": "#666666",
+                                    "size": "sm",
+                                    "flex": 5
+                                }
+                                ]
+                            },
+                            {
+                                "type": "box",
+                                "layout": "baseline",
+                                "spacing": "sm",
+                                "contents": [
+                                {
+                                    "type": "text",
+                                    "text": "Time",
+                                    "color": "#aaaaaa",
+                                    "size": "sm",
+                                    "flex": 1
+                                },
+                                {
+                                    "type": "text",
+                                    "text": "11:00 - 21:30",
+                                    "wrap": True,
+                                    "color": "#666666",
+                                    "size": "sm",
+                                    "flex": 5
+                                }
+                                ]
+                            }
+                            ]
+                        }
+                        ]
+                    },
+                    "footer": {
+                        "type": "box",
+                        "layout": "vertical",
+                        "spacing": "sm",
+                        "contents": [
+                        {
+                            "type": "button",
+                            "style": "link",
+                            "height": "sm",
+                            "action": {
+                            "type": "uri",
+                            "label": "MAP",
+                            "uri": "https://maps.app.goo.gl/dBSTW8FwKgjjD3cC6"
+                            }
+                        },
+                        {
+                            "type": "box",
+                            "layout": "vertical",
+                            "contents": [],
+                            "margin": "sm"
+                        }
+                        ],
+                        "flex": 0
+                    }
+                }
+                shop_json_str = json.dumps(shop_json)
+                line_bot_api.reply_message(
+                    ReplyMessageRequest(
+                        reply_token=event.reply_token,
+                        messages=[FlexMessage(alt_text='專櫃資訊', contents = FlexContainer.from_json(shop_json_str))]
+                    )
+                )
+            elif text == '高雄SOGO高雄店':
+                shop_json = {
+                    "type": "bubble",
+                    "hero": {
+                        "type": "image",
+                        "url": "https://www.vastar.com.tw/imagess/1021092923_21011259Ap1.jpg",
+                        "size": "full",
+                        "aspectRatio": "20:13",
+                        "aspectMode": "cover",
+                        "action": {
+                        "type": "uri",
+                        "uri": "https://line.me/"
+                        }
+                    },
+                    "body": {
+                        "type": "box",
+                        "layout": "vertical",
+                        "contents": [
+                        {
+                            "type": "text",
+                            "text": "高雄SOGO高雄店",
+                            "weight": "bold",
+                            "size": "xl"
+                        },
+                        {
+                            "type": "box",
+                            "layout": "baseline",
+                            "margin": "md",
+                            "contents": []
+                        },
+                        {
+                            "type": "box",
+                            "layout": "vertical",
+                            "margin": "lg",
+                            "spacing": "sm",
+                            "contents": [
+                            {
+                                "type": "box",
+                                "layout": "baseline",
+                                "spacing": "sm",
+                                "contents": [
+                                {
+                                    "type": "text",
+                                    "text": "Place",
+                                    "color": "#aaaaaa",
+                                    "size": "sm",
+                                    "flex": 1
+                                },
+                                {
+                                    "type": "text",
+                                    "text": "高雄市前鎮區三多三路217號",
+                                    "wrap": True,
+                                    "color": "#666666",
+                                    "size": "sm",
+                                    "flex": 5
+                                }
+                                ]
+                            },
+                            {
+                                "type": "box",
+                                "layout": "baseline",
+                                "spacing": "sm",
+                                "contents": [
+                                {
+                                    "type": "text",
+                                    "text": "Time",
+                                    "color": "#aaaaaa",
+                                    "size": "sm",
+                                    "flex": 1
+                                },
+                                {
+                                    "type": "text",
+                                    "text": "11:00 - 21:30",
+                                    "wrap": True,
+                                    "color": "#666666",
+                                    "size": "sm",
+                                    "flex": 5
+                                }
+                                ]
+                            }
+                            ]
+                        }
+                        ]
+                    },
+                    "footer": {
+                        "type": "box",
+                        "layout": "vertical",
+                        "spacing": "sm",
+                        "contents": [
+                        {
+                            "type": "button",
+                            "style": "link",
+                            "height": "sm",
+                            "action": {
+                            "type": "uri",
+                            "label": "MAP",
+                            "uri": "https://maps.app.goo.gl/8G87HxKe3eLiuikRA"
+                            }
+                        },
+                        {
+                            "type": "box",
+                            "layout": "vertical",
+                            "contents": [],
+                            "margin": "sm"
+                        }
+                        ],
+                        "flex": 0
+                    }
+                }
+                shop_json_str = json.dumps(shop_json)
+                line_bot_api.reply_message(
+                    ReplyMessageRequest(
+                        reply_token=event.reply_token,
+                        messages=[FlexMessage(alt_text='專櫃資訊', contents = FlexContainer.from_json(shop_json_str))]
+                    )
+                )
 #followevent 加入好友
 @line_handler.add(FollowEvent)
 def handle_follow(event):
