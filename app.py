@@ -219,7 +219,7 @@ def handle_message(event):
                                 {
                                     "type": "text",
                                     "text": "台北市士林區中山北路六段77號",
-                                    "wrap": true,
+                                    "wrap": True,
                                     "color": "#666666",
                                     "size": "sm",
                                     "flex": 5
@@ -241,7 +241,7 @@ def handle_message(event):
                                 {
                                     "type": "text",
                                     "text": "11:00 - 21:30",
-                                    "wrap": true,
+                                    "wrap": True,
                                     "color": "#666666",
                                     "size": "sm",
                                     "flex": 5
