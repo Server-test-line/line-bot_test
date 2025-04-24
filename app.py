@@ -104,12 +104,6 @@ def handle_message(event):
         elif step == 1:
             if text == '是':
                 # 使用者登入會員 → 回傳 shipTemplate，請他選擇送修方式
-                line_bot_api.reply_message(
-                    ReplyMessageRequest(
-                        reply_token=event.reply_token,
-                        messages=[TextMessage(text='登入成功')]
-                    )
-                )
                 ship_template = ButtonsTemplate(
                     title='送修方式',
                     text='想要如何送修？',
