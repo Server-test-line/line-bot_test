@@ -755,6 +755,74 @@ def handle_message(event):
                 )
                 user_states[user_id]["step"] = 0
 
+        if text == '報修查詢':
+            user_states[user_id]["step"] = 1
+            confirm_template = ConfirmTemplate(
+                text = '是否有會員？',
+                actions = [
+                    MessageAction(label = 'Yes' , text = '是'),
+                    MessageAction(label = 'No' , text = '否'),
+                ]
+            )
+            template_message = TemplateMessage(
+                alt_text = '請先登入會員',
+                template = confirm_template
+            )
+            line_bot_api.reply_message(
+                ReplyMessageRequest(
+                    reply_token=event.reply_token,
+                    messages=[template_message]
+                )
+            )
+        elif step == 1:
+            if text == '是':
+                # 登入後列出維修資料
+                
+                user_states[user_id]["step"] = 2
+
+            else:
+                line_bot_api.reply_message(
+                    ReplyMessageRequest(
+                        reply_token=event.reply_token,
+                        messages=[TextMessage(text='請重新登入會員')]
+                    )
+                )
+                user_states[user_id]["step"] = 0
+
+        if text == '會員登入':
+            user_states[user_id]["step"] = 1
+            confirm_template = ConfirmTemplate(
+                text = '是否有會員？',
+                actions = [
+                    MessageAction(label = 'Yes' , text = '是'),
+                    MessageAction(label = 'No' , text = '否'),
+                ]
+            )
+            template_message = TemplateMessage(
+                alt_text = '請先登入會員',
+                template = confirm_template
+            )
+            line_bot_api.reply_message(
+                ReplyMessageRequest(
+                    reply_token=event.reply_token,
+                    messages=[template_message]
+                )
+            )
+        elif step == 1:
+            if text == '是':
+                # 登入功能
+                
+                user_states[user_id]["step"] = 2
+
+            else:
+                line_bot_api.reply_message(
+                    ReplyMessageRequest(
+                        reply_token=event.reply_token,
+                        messages=[TextMessage(text='請重新登入會員')]
+                    )
+                )
+                user_states[user_id]["step"] = 0
+        
 #followevent 加入好友
 @line_handler.add(FollowEvent)
 def handle_follow(event):
