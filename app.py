@@ -110,19 +110,6 @@ def handle_message(event):
                         messages=[TextMessage(text='登入成功')]
                     )
                 )
-                user_states[user_id]["step"] = 2
-            else:
-                line_bot_api.reply_message(
-                    ReplyMessageRequest(
-                        reply_token=event.reply_token,
-                        messages=[TextMessage(text='請重新登入會員')]
-                    )
-                )
-                user_states[user_id]["step"] = 0
-        
-        elif step == 2:
-            if text == '是':
-                user_states[user_id]["step"] = 3
                 ship_template = ButtonsTemplate(
                     title='送修方式',
                     text='想要如何送修？',
@@ -142,18 +129,20 @@ def handle_message(event):
                         messages=[template_message]
                     )
                 )
+                user_states[user_id]["step"] = 2
+
             else:
                 line_bot_api.reply_message(
                     ReplyMessageRequest(
                         reply_token=event.reply_token,
-                        messages=[TextMessage(text='請重新選擇送修方式')]
+                        messages=[TextMessage(text='請重新登入會員')]
                     )
                 )
                 user_states[user_id]["step"] = 0
-
-        elif step == 3:
+        
+        elif step == 2:
             if text == '送至百貨專櫃':
-                user_states[user_id]["step"] = 4
+                user_states[user_id]["step"] = 3
                 ship_template = ButtonsTemplate(
                 title='百貨專櫃',
                 text='分店資訊',
@@ -184,7 +173,7 @@ def handle_message(event):
                 )
                 user_states[user_id]["step"] = 0
 
-        elif step == 4:
+        elif step == 3:
             if text == '臺北SOGO天母店':
                 shop_json = {
                     "type": "bubble",
