@@ -104,6 +104,14 @@ def handle_message(event):
         elif step == 1:
             if '是' in text:
                 # 使用者登入會員 → 回傳 shipTemplate，請他選擇送修方式
+                login_url = "https://line-login-site.vercel.app/"  # Firebase 登入頁面網址
+
+                line_bot_api.reply_message(
+                    ReplyMessageRequest(
+                        reply_token=event.reply_token,
+                        messages=[TextMessage(text=f"請點選以下連結登入會員：\n{login_url}")]
+                    )
+                )
                 ship_template = ButtonsTemplate(
                     title='送修方式',
                     text='想要如何送修？',
