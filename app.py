@@ -79,29 +79,41 @@ def callback_login():
         try:
             with ApiClient(configuration) as api_client:
                 line_bot_api = MessagingApi(api_client)
+                
+                # 記錄接收到的資料
+                app.logger.info(f"接收到的資料：{data}")
+                
                 if login_success:
                     # 登入成功，更新狀態並發送訊息
                     user_states[user_id] = user_states.get(user_id, {})
                     user_states[user_id]["login_success"] = True
                     user_states[user_id]["step"] = 1
-                    line_bot_api.push_message(
+                    app.logger.info(f"更新的用戶狀態：{user_states[user_id]}")  # 記錄更新後的狀態
+                    
+                    # 發送登入成功訊息
+                    response = line_bot_api.push_message(
                         PushMessageRequest(
                             to=user_id,
                             messages=[TextMessage(text="✅ 登入成功！請選擇送修方式：\n- 百貨專櫃\n- 到府收貨\n- 自行送修")]
                         )
                     )
+                    app.logger.info(f"Line API 返回：{response}")  # 記錄 Line API 的回應
                     app.logger.info(f"通知成功發送給用戶：{user_id}")  # 記錄成功發送的訊息
                 else:
                     # 登入失敗，發送錯誤訊息
                     user_states[user_id] = user_states.get(user_id, {})
                     user_states[user_id]["login_success"] = False
                     user_states[user_id]["step"] = 0
-                    line_bot_api.push_message(
+                    app.logger.info(f"更新的用戶狀態：{user_states[user_id]}")  # 記錄更新後的狀態
+                    
+                    # 發送登入失敗訊息
+                    response = line_bot_api.push_message(
                         PushMessageRequest(
                             to=user_id,
                             messages=[TextMessage(text="❌ 登入失敗，請重新登入會員")]
                         )
                     )
+                    app.logger.info(f"Line API 返回：{response}")  # 記錄 Line API 的回應
                     app.logger.info(f"登入失敗，發送錯誤訊息給用戶：{user_id}")  # 記錄錯誤訊息
         except Exception as e:
             app.logger.error(f"通知發送失敗：{str(e)}")  # 記錄錯誤資訊
