@@ -12,13 +12,13 @@ from linebot.v3.messaging import (
     MessagingApi,
     ReplyMessageRequest,
     TextMessage,
-    TemplateSendMessage,
+    TemplateMessage,
     ConfirmTemplate,
     ButtonsTemplate,
     CarouselTemplate,
     CarouselColumn,
-    ImageCarouselTemplate,
     ImageCarouselColumn,
+    ImageCarouselTemplate,
     MessageAction,
     URIAction,
     PostbackAction,
@@ -83,48 +83,60 @@ def handle_message(event):
 
         if '報修' in text:
             user_states[user_id]["step"] = 1
-            login_url = "https://line-login-site.vercel.app/"  # Firebase 登入頁面網址
-
+            login_json = {
+                "type": "bubble",
+                "body": {
+                    "type": "box",
+                    "layout": "vertical",
+                    "contents": [
+                    {
+                        "type": "text",
+                        "text": "請點選進入會員登入",
+                        "weight": "bold",
+                        "size": "xl",
+                        "align": "center"
+                    }
+                    ]
+                },
+                "footer": {
+                    "type": "box",
+                    "layout": "vertical",
+                    "spacing": "sm",
+                    "contents": [
+                    {
+                        "type": "button",
+                        "style": "primary",
+                        "height": "sm",
+                        "action": {
+                        "type": "uri",
+                        "label": "登入",
+                        "uri": "https://line-login-site.vercel.app/"
+                        },
+                        "position": "relative",
+                        "color": "#46A3FF",
+                        "margin": "none"
+                    },
+                    {
+                        "type": "box",
+                        "layout": "vertical",
+                        "contents": [],
+                        "margin": "sm"
+                    }
+                    ],
+                    "flex": 0
+                }
+                }
+            login_json_str = json.dumps(login_json)
             line_bot_api.reply_message(
                 ReplyMessageRequest(
                     reply_token=event.reply_token,
-                    messages=[
-                        TemplateSendMessage(
-                            alt_text="請點選按鈕登入會員",
-                            template=ButtonsTemplate(
-                                title="會員登入",
-                                text="請點選下方按鈕前往登入網站：",
-                                actions=[
-                                    URIAction(label="登入會員", uri=login_url)
-                                ]
-                            )
-                        )
-                    ]
+                    messages=[FlexMessage(alt_text='會員登入', contents = FlexContainer.from_json(login_json_str))]
                 )
             )
             
         elif step == 1:
             if '是' in text:
                 # 使用者登入會員 → 回傳 shipTemplate，請他選擇送修方式
-                login_url = "https://line-login-site.vercel.app/"  # Firebase 登入頁面網址
-
-                line_bot_api.reply_message(
-                    ReplyMessageRequest(
-                        reply_token=event.reply_token,
-                        messages=[
-                            TemplateSendMessage(
-                                alt_text="請點選按鈕登入會員",
-                                template=ButtonsTemplate(
-                                    title="會員登入",
-                                    text="請點選下方按鈕前往登入網站：",
-                                    actions=[
-                                        URIAction(label="登入會員", uri=login_url)
-                                    ]
-                                )
-                            )
-                        ]
-                    )
-                )
                 ship_template = ButtonsTemplate(
                     title='送修方式',
                     text='想要如何送修？',
