@@ -76,32 +76,35 @@ def callback_login():
     login_success = data.get("loginSuccess")
 
     if user_id:
-        with ApiClient(configuration) as api_client:
-            line_bot_api = MessagingApi(api_client)
-            if login_success:
-                user_states[user_id] = user_states.get(user_id, {})
-                user_states[user_id]["login_success"] = True
-                user_states[user_id]["step"] = 1
-                try:
+        try:
+            with ApiClient(configuration) as api_client:
+                line_bot_api = MessagingApi(api_client)
+                if login_success:
+                    # 登入成功，更新狀態並發送訊息
+                    user_states[user_id] = user_states.get(user_id, {})
+                    user_states[user_id]["login_success"] = True
+                    user_states[user_id]["step"] = 1
                     line_bot_api.push_message(
                         PushMessageRequest(
                             to=user_id,
                             messages=[TextMessage(text="✅ 登入成功！請選擇送修方式：\n- 百貨專櫃\n- 到府收貨\n- 自行送修")]
                         )
                     )
-                except Exception as e:
-                    app.logger.error(f"Error while pushing message: {e}")
-
-            else:
-                user_states[user_id] = user_states.get(user_id, {})
-                user_states[user_id]["login_success"] = False
-                user_states[user_id]["step"] = 0
-                line_bot_api.push_message(
-                    PushMessageRequest(
-                        to=user_id,
-                        messages=[TextMessage(text="❌ 登入失敗，請重新登入會員")]
+                    app.logger.info(f"通知成功發送給用戶：{user_id}")  # 記錄成功發送的訊息
+                else:
+                    # 登入失敗，發送錯誤訊息
+                    user_states[user_id] = user_states.get(user_id, {})
+                    user_states[user_id]["login_success"] = False
+                    user_states[user_id]["step"] = 0
+                    line_bot_api.push_message(
+                        PushMessageRequest(
+                            to=user_id,
+                            messages=[TextMessage(text="❌ 登入失敗，請重新登入會員")]
+                        )
                     )
-                )
+                    app.logger.info(f"登入失敗，發送錯誤訊息給用戶：{user_id}")  # 記錄錯誤訊息
+        except Exception as e:
+            app.logger.error(f"通知發送失敗：{str(e)}")  # 記錄錯誤資訊
     return "OK"
 
 
