@@ -72,6 +72,7 @@ def callback():
 @app.route("/callback_login", methods=['POST'])
 def callback_login():
     data = request.get_json()
+    print(f"⚠️ 收到的資料：{data}")
     user_id = data.get("userId")
     login_success = data.get("loginSuccess")
 
