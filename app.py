@@ -75,64 +75,67 @@ def callback_login():
     user_id = data.get("userId")
     login_success = data.get("loginSuccess")
 
-    if user_id:
-        try:
-            with ApiClient(configuration) as api_client:
-                line_bot_api = MessagingApi(api_client)
-                
-                # 記錄接收到的資料
-                app.logger.info(f"接收到的資料：{data}")
-                
-                if login_success:
-                    # 登入成功，更新狀態
-                    user_states[user_id] = user_states.get(user_id, {})
-                    user_states[user_id]["login_success"] = True
-                    user_states[user_id]["step"] = 2  # 直接跳到選送修方式的下一步
-                    app.logger.info(f"更新的用戶狀態：{user_states[user_id]}")  # 記錄更新後的狀態
-                
-                    # 準備送修方式的 ButtonsTemplate
-                    ship_template = ButtonsTemplate(
-                        title='送修方式',
-                        text='想要如何送修？',
-                        actions=[
-                            MessageAction(label='百貨專櫃', text='送至百貨專櫃'),
-                            MessageAction(label='到府收貨', text='請人員到府收貨'),
-                            MessageAction(label='自行送修', text='自行送修'),
-                        ]
-                    )
-                    template_message = TemplateMessage(
-                        alt_text='如何送修',
-                        template=ship_template
-                    )
-                
-                    # 直接推送送修方式
-                    response = line_bot_api.push_message(
-                        PushMessageRequest(
-                            to=user_id,
-                            messages=[template_message]
-                        )
-                    )
-                    app.logger.info(f"Line API 返回：{response}")  # 記錄 Line API 的回應
-                    app.logger.info(f"通知成功發送給用戶：{user_id}")  # 記錄成功發送的訊息
+    if not user_id:
+        print("⚠️ 錯誤：未提供 userId")
+        return "Missing userId", 400
 
-                else:
-                    # 登入失敗，發送錯誤訊息
-                    user_states[user_id] = user_states.get(user_id, {})
-                    user_states[user_id]["login_success"] = False
-                    user_states[user_id]["step"] = 0
-                    app.logger.info(f"更新的用戶狀態：{user_states[user_id]}")  # 記錄更新後的狀態
-                    
-                    # 發送登入失敗訊息
-                    response = line_bot_api.push_message(
-                        PushMessageRequest(
-                            to=user_id,
-                            messages=[TextMessage(text="❌ 登入失敗，請重新登入會員")]
-                        )
+    configuration = Configuration(access_token=os.getenv('CHANNEL_ACCESS_TOKEN'))
+
+    try:
+        with ApiClient(configuration) as api_client:
+            line_bot_api = MessagingApi(api_client)
+
+            if login_success:
+                user_states[user_id] = user_states.get(user_id, {})
+                user_states[user_id]["login_success"] = True
+                user_states[user_id]["step"] = 2
+
+                # 建立送修方式選單
+                ship_template = ButtonsTemplate(
+                    title='送修方式',
+                    text='想要如何送修？',
+                    actions=[
+                        MessageAction(label='百貨專櫃', text='送至百貨專櫃'),
+                        MessageAction(label='到府收貨', text='請人員到府收貨'),
+                        MessageAction(label='自行送修', text='自行送修')
+                    ]
+                )
+                template_message = TemplateMessage(
+                    alt_text='如何送修',
+                    template=ship_template
+                )
+
+                # 直接推送訊息
+                response = line_bot_api.push_message(
+                    PushMessageRequest(
+                        to=user_id,
+                        messages=[template_message]
                     )
-                    app.logger.info(f"Line API 返回：{response}")  # 記錄 Line API 的回應
-                    app.logger.info(f"登入失敗，發送錯誤訊息給用戶：{user_id}")  # 記錄錯誤訊息
-        except Exception as e:
-            app.logger.error(f"通知發送失敗：{str(e)}")  # 記錄錯誤資訊
+                )
+                print(f"✅ 已推送登入成功通知給 {user_id}")
+                print(f"✅ Line API 回傳：{response}")
+            else:
+                # 登入失敗情況
+                user_states[user_id] = user_states.get(user_id, {})
+                user_states[user_id]["login_success"] = False
+                user_states[user_id]["step"] = 0
+
+                response = line_bot_api.push_message(
+                    PushMessageRequest(
+                        to=user_id,
+                        messages=[TextMessage(text="❌ 登入失敗，請重新登入會員")]
+                    )
+                )
+                print(f"✅ 已推送登入失敗通知給 {user_id}")
+                print(f"✅ Line API 回傳：{response}")
+
+    except Exception as e:
+        print(f"❌ 通知推送失敗：{str(e)}")
+        if hasattr(e, 'status'):
+            print(f"HTTP Status: {e.status}")
+        if hasattr(e, 'body'):
+            print(f"Response body: {e.body}")
+
     return "OK"
 
 
