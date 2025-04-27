@@ -31,7 +31,8 @@ from linebot.v3.messaging import (
     FlexIcon,
     FlexButton,
     FlexSeparator,
-    FlexContainer
+    FlexContainer,
+    PushMessageRequest
 )
 from linebot.v3.webhooks import (
     MessageEvent,
@@ -78,15 +79,23 @@ def callback_login():
         with ApiClient(configuration) as api_client:
             line_bot_api = MessagingApi(api_client)
             if login_success:
-                user_states[user_id] = {"login_success": True, "step": 1}
-                line_bot_api.push_message(
-                    PushMessageRequest(
-                        to=user_id,
-                        messages=[TextMessage(text="✅ 登入成功！請選擇送修方式：\n- 百貨專櫃\n- 到府收貨\n- 自行送修")]
+                user_states[user_id] = user_states.get(user_id, {})
+                user_states[user_id]["login_success"] = True
+                user_states[user_id]["step"] = 1
+                try:
+                    line_bot_api.push_message(
+                        PushMessageRequest(
+                            to=user_id,
+                            messages=[TextMessage(text="✅ 登入成功！請選擇送修方式：\n- 百貨專櫃\n- 到府收貨\n- 自行送修")]
+                        )
                     )
-                )
+                except Exception as e:
+                    app.logger.error(f"Error while pushing message: {e}")
+
             else:
-                user_states[user_id] = {"login_success": False, "step": 0}
+                user_states[user_id] = user_states.get(user_id, {})
+                user_states[user_id]["login_success"] = False
+                user_states[user_id]["step"] = 0
                 line_bot_api.push_message(
                     PushMessageRequest(
                         to=user_id,
