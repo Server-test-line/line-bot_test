@@ -75,6 +75,7 @@ def callback_login():
     print(f"⚠️ 收到的資料：{data}")
     user_id = data.get("userId")
     login_success = data.get("loginSuccess")
+    error_message = data.get("errorMessage")  # 假設伺服器回傳的錯誤訊息
 
     if not user_id:
         print("⚠️ 錯誤：未提供 userId")
@@ -95,11 +96,9 @@ def callback_login():
                 ship_template = ButtonsTemplate(
                     title='送修方式',
                     text='想要如何送修？',
-                    actions=[
-                        MessageAction(label='百貨專櫃', text='送至百貨專櫃'),
-                        MessageAction(label='到府收貨', text='請人員到府收貨'),
-                        MessageAction(label='自行送修', text='自行送修')
-                    ]
+                    actions=[MessageAction(label='百貨專櫃', text='送至百貨專櫃'),
+                             MessageAction(label='到府收貨', text='請人員到府收貨'),
+                             MessageAction(label='自行送修', text='自行送修')]
                 )
                 template_message = TemplateMessage(
                     alt_text='如何送修',
@@ -121,10 +120,16 @@ def callback_login():
                 user_states[user_id]["login_success"] = False
                 user_states[user_id]["step"] = 0
 
+                # 根據伺服器回傳的錯誤訊息處理
+                if error_message:
+                    error_text = f"❌ 登入失敗，原因：{error_message}"
+                else:
+                    error_text = "❌ 登入失敗，請重新登入會員"
+
                 response = line_bot_api.push_message(
                     PushMessageRequest(
                         to=user_id,
-                        messages=[TextMessage(text="❌ 登入失敗，請重新登入會員")]
+                        messages=[TextMessage(text=error_text)]
                     )
                 )
                 print(f"✅ 已推送登入失敗通知給 {user_id}")
