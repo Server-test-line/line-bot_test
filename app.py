@@ -67,7 +67,34 @@ def callback():
         abort(400)
 
     return 'OK'
-        
+
+@app.route("/callback_login", methods=['POST'])
+def callback_login():
+    data = request.get_json()
+    user_id = data.get("userId")
+    login_success = data.get("loginSuccess")
+
+    if user_id:
+        with ApiClient(configuration) as api_client:
+            line_bot_api = MessagingApi(api_client)
+            if login_success:
+                user_states[user_id] = {"login_success": True, "step": 1}
+                line_bot_api.push_message(
+                    PushMessageRequest(
+                        to=user_id,
+                        messages=[TextMessage(text="✅ 登入成功！請選擇送修方式：\n- 百貨專櫃\n- 到府收貨\n- 自行送修")]
+                    )
+                )
+            else:
+                user_states[user_id] = {"login_success": False, "step": 0}
+                line_bot_api.push_message(
+                    PushMessageRequest(
+                        to=user_id,
+                        messages=[TextMessage(text="❌ 登入失敗，請重新登入會員")]
+                    )
+                )
+    return "OK"
+
 
 @line_handler.add(MessageEvent, message=TextMessageContent)
 def handle_message(event):
@@ -110,7 +137,7 @@ def handle_message(event):
                         "action": {
                         "type": "uri",
                         "label": "登入",
-                        "uri": "https://line-login-site.vercel.app/"
+                        "uri": "https://line-login-site.vercel.app/?userId={user_id}" #加入userid
                         },
                         "position": "relative",
                         "color": "#46A3FF",
@@ -135,7 +162,7 @@ def handle_message(event):
             )
             
         elif step == 1:
-            if '是' in text:
+            if user_states[user_id].get("login_success", False):
                 # 使用者登入會員 → 回傳 shipTemplate，請他選擇送修方式
                 ship_template = ButtonsTemplate(
                     title='送修方式',
