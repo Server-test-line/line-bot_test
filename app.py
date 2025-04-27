@@ -206,7 +206,7 @@ def handle_message(event):
             )
             
         elif step == 1:
-            if text == '登入成功':
+            if '登入成功' in text:
                 # 使用者登入會員 → 回傳 shipTemplate，請他選擇送修方式
                 ship_template = ButtonsTemplate(
                     title='送修方式',
