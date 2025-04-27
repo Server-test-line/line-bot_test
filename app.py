@@ -146,7 +146,7 @@ def handle_message(event):
                         "action": {
                         "type": "uri",
                         "label": "登入",
-                        "uri": "https://line-login-site.vercel.app/?userId={user_id}" #加入userid
+                        "uri": f"https://line-login-site.vercel.app/?userId={user_id}" #加入userid
                         },
                         "position": "relative",
                         "color": "#46A3FF",
