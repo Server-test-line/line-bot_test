@@ -90,30 +90,7 @@ def callback_login():
             if login_success:
                 user_states[user_id] = user_states.get(user_id, {})
                 user_states[user_id]["login_success"] = True
-                user_states[user_id]["step"] = 2
-
-                # 建立送修方式選單
-                ship_template = ButtonsTemplate(
-                    title='送修方式',
-                    text='想要如何送修？',
-                    actions=[MessageAction(label='百貨專櫃', text='送至百貨專櫃'),
-                             MessageAction(label='到府收貨', text='請人員到府收貨'),
-                             MessageAction(label='自行送修', text='自行送修')]
-                )
-                template_message = TemplateMessage(
-                    alt_text='如何送修',
-                    template=ship_template
-                )
-
-                # 直接推送訊息
-                response = line_bot_api.push_message(
-                    PushMessageRequest(
-                        to=user_id,
-                        messages=[template_message]
-                    )
-                )
-                print(f"✅ 已推送登入成功通知給 {user_id}")
-                print(f"✅ Line API 回傳：{response}")
+                user_states[user_id]["step"] = 1
             else:
                 # 登入失敗情況
                 user_states[user_id] = user_states.get(user_id, {})
