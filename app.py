@@ -24,7 +24,7 @@ from linebot.v3.messaging import (
     PostbackAction,
     DatetimePickerAction,
     FlexMessage,
-
+    TemplateSendMessage,
     FlexImage,
     FlexBubble,
     FlexBox,
@@ -84,23 +84,26 @@ def handle_message(event):
 
         if '報修' in text:
             user_states[user_id]["step"] = 1
-            confirm_template = ConfirmTemplate(
-                text = '是否有會員？',
-                actions = [
-                    MessageAction(label = 'Yes' , text = '是'),
-                    MessageAction(label = 'No' , text = '否'),
-                ]
-            )
-            template_message = TemplateMessage(
-                alt_text = '請先登入會員',
-                template = confirm_template
-            )
+            login_url = "https://line-login-site.vercel.app/"  # Firebase 登入頁面網址
+
             line_bot_api.reply_message(
                 ReplyMessageRequest(
                     reply_token=event.reply_token,
-                    messages=[template_message]
+                    messages=[
+                        TemplateSendMessage(
+                            alt_text="請點選按鈕登入會員",
+                            template=ButtonsTemplate(
+                                title="會員登入",
+                                text="請點選下方按鈕前往登入網站：",
+                                actions=[
+                                    URIAction(label="登入會員", uri=login_url)
+                                ]
+                            )
+                        )
+                    ]
                 )
             )
+            
         elif step == 1:
             if '是' in text:
                 # 使用者登入會員 → 回傳 shipTemplate，請他選擇送修方式
@@ -109,7 +112,18 @@ def handle_message(event):
                 line_bot_api.reply_message(
                     ReplyMessageRequest(
                         reply_token=event.reply_token,
-                        messages=[TextMessage(text=f"請點選以下連結登入會員：\n{login_url}")]
+                        messages=[
+                            TemplateSendMessage(
+                                alt_text="請點選按鈕登入會員",
+                                template=ButtonsTemplate(
+                                    title="會員登入",
+                                    text="請點選下方按鈕前往登入網站：",
+                                    actions=[
+                                        URIAction(label="登入會員", uri=login_url)
+                                    ]
+                                )
+                            )
+                        ]
                     )
                 )
                 ship_template = ButtonsTemplate(
