@@ -154,27 +154,28 @@ def handle_message(event):
             )
             
         elif step == 1:
-            # 使用者登入會員 → 回傳 shipTemplate，請他選擇送修方式
-            ship_template = ButtonsTemplate(
-                title='送修方式',
-                text='想要如何送修？',
-                actions=[
-                    MessageAction(label='百貨專櫃', text='送至百貨專櫃'),
-                    MessageAction(label='到府收貨', text='請人員到府收貨'),
-                    MessageAction(label='自行送修', text='自行送修'),
-                ]
-            )
-            template_message = TemplateMessage(
-                alt_text='如何送修',
-                template=ship_template
-            )
-            line_bot_api.reply_message(
-                ReplyMessageRequest(
-                    reply_token=event.reply_token,
-                    messages=[template_message]
+            if '下一步' in text: 
+                # 使用者登入會員 → 回傳 shipTemplate，請他選擇送修方式
+                ship_template = ButtonsTemplate(
+                    title='送修方式',
+                    text='想要如何送修？',
+                    actions=[
+                        MessageAction(label='百貨專櫃', text='送至百貨專櫃'),
+                        MessageAction(label='到府收貨', text='請人員到府收貨'),
+                        MessageAction(label='自行送修', text='自行送修'),
+                    ]
                 )
-            )
-            user_states[user_id]["step"] = 2
+                template_message = TemplateMessage(
+                    alt_text='如何送修',
+                    template=ship_template
+                )
+                line_bot_api.reply_message(
+                    ReplyMessageRequest(
+                        reply_token=event.reply_token,
+                        messages=[template_message]
+                    )
+                )
+                user_states[user_id]["step"] = 2
         
         elif step == 2:
             if '百貨' in text:
