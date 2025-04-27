@@ -72,53 +72,19 @@ def callback():
 @app.route("/callback_login", methods=['POST'])
 def callback_login():
     data = request.get_json()
-    print(f"⚠️ 收到的資料：{data}")
     user_id = data.get("userId")
     login_success = data.get("loginSuccess")
-    error_message = data.get("errorMessage")  # 假設伺服器回傳的錯誤訊息
 
     if not user_id:
-        print("⚠️ 錯誤：未提供 userId")
         return "Missing userId", 400
 
-    configuration = Configuration(access_token=os.getenv('CHANNEL_ACCESS_TOKEN'))
-
-    try:
-        with ApiClient(configuration) as api_client:
-            line_bot_api = MessagingApi(api_client)
-
-            if login_success:
-                user_states[user_id] = user_states.get(user_id, {})
-                user_states[user_id]["login_success"] = True
-                user_states[user_id]["step"] = 1
-            else:
-                # 登入失敗情況
-                user_states[user_id] = user_states.get(user_id, {})
-                user_states[user_id]["login_success"] = False
-                user_states[user_id]["step"] = 0
-
-                # 根據伺服器回傳的錯誤訊息處理
-                if error_message:
-                    error_text = f"❌ 登入失敗，原因：{error_message}"
-                else:
-                    error_text = "❌ 登入失敗，請重新登入會員"
-
-                response = line_bot_api.push_message(
-                    PushMessageRequest(
-                        to=user_id,
-                        messages=[TextMessage(text=error_text)]
-                    )
-                )
-                print(f"✅ 已推送登入失敗通知給 {user_id}")
-                print(f"✅ Line API 回傳：{response}")
-
-    except Exception as e:
-        print(f"❌ 通知推送失敗：{str(e)}")
-        if hasattr(e, 'status'):
-            print(f"HTTP Status: {e.status}")
-        if hasattr(e, 'body'):
-            print(f"Response body: {e.body}")
-
+    # 儲存使用者登入狀態
+    if login_success:
+        user_states[user_id] = {"login_success": True, "step": 1}
+    else:
+        user_states[user_id] = {"login_success": False, "step": 0}
+    
+    # 更新使用者狀態
     return "OK"
 
 
