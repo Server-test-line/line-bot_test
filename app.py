@@ -800,23 +800,57 @@ def handle_message(event):
 
         if '查詢' in text:
             user_states[user_id]["step"] = 4
-            confirm_template = ConfirmTemplate(
-                text = '是否有會員？',
-                actions = [
-                    MessageAction(label = 'Yes' , text = '是'),
-                    MessageAction(label = 'No' , text = '否'),
-                ]
-            )
-            template_message = TemplateMessage(
-                alt_text = '請先登入會員',
-                template = confirm_template
-            )
+            login_json = {
+                "type": "bubble",
+                "body": {
+                    "type": "box",
+                    "layout": "vertical",
+                    "contents": [
+                    {
+                        "type": "text",
+                        "text": "請點選進入會員登入",
+                        "weight": "bold",
+                        "size": "xl",
+                        "align": "center"
+                    }
+                    ]
+                },
+                "footer": {
+                    "type": "box",
+                    "layout": "vertical",
+                    "spacing": "sm",
+                    "contents": [
+                    {
+                        "type": "button",
+                        "style": "primary",
+                        "height": "sm",
+                        "action": {
+                        "type": "uri",
+                        "label": "登入",
+                        "uri": f"https://line-login-site.vercel.app/?userId={user_id}" #加入userid
+                        },
+                        "position": "relative",
+                        "color": "#46A3FF",
+                        "margin": "none"
+                    },
+                    {
+                        "type": "box",
+                        "layout": "vertical",
+                        "contents": [],
+                        "margin": "sm"
+                    }
+                    ],
+                    "flex": 0
+                }
+                }
+            login_json_str = json.dumps(login_json)
             line_bot_api.reply_message(
                 ReplyMessageRequest(
                     reply_token=event.reply_token,
-                    messages=[template_message]
+                    messages=[FlexMessage(alt_text='會員登入', contents = FlexContainer.from_json(login_json_str))]
                 )
             )
+            
         elif step == 4:
             if '是' in text:
                 # 登入後列出維修資料
