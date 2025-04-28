@@ -104,6 +104,7 @@ def handle_message(event):
             user_states[user_id]["step"] = 1
             login_json = {
                 "type": "bubble",
+                "size": "kilo",
                 "body": {
                     "type": "box",
                     "layout": "vertical",
