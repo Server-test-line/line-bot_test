@@ -151,47 +151,207 @@ def handle_message(event):
         elif step == 1:
             if '選擇送修方式' in text: 
                 # 使用者登入會員 → 回傳 shipTemplate，請他選擇送修方式
-                ship_template = ButtonsTemplate(
-                    title='送修方式',
-                    text='想要如何送修？',
-                    actions=[
-                        MessageAction(label='百貨專櫃', text='送至百貨專櫃'),
-                        MessageAction(label='到府收貨', text='請人員到府收貨'),
-                        MessageAction(label='自行送修', text='自行送修'),
-                    ]
-                )
-                template_message = TemplateMessage(
-                    alt_text='如何送修',
-                    template=ship_template
-                )
+                ship_json = {
+                  "type": "bubble",
+                  "size": "kilo",
+                  "body": {
+                    "type": "box",
+                    "layout": "vertical",
+                    "contents": [
+                      {
+                        "type": "text",
+                        "text": "送修方式",
+                        "weight": "bold",
+                        "size": "xl"
+                      },
+                      {
+                        "type": "box",
+                        "layout": "vertical",
+                        "margin": "lg",
+                        "spacing": "sm",
+                        "contents": [
+                          {
+                            "type": "box",
+                            "layout": "baseline",
+                            "spacing": "sm",
+                            "contents": [
+                              {
+                                "type": "text",
+                                "text": "想要如何送修？",
+                                "color": "#aaaaaa",
+                                "size": "sm",
+                                "flex": 1
+                              }
+                            ]
+                          }
+                        ]
+                      }
+                    ],
+                    "spacing": "xs"
+                  },
+                  "footer": {
+                    "type": "box",
+                    "layout": "vertical",
+                    "spacing": "sm",
+                    "contents": [
+                      {
+                        "type": "button",
+                        "style": "primary",
+                        "height": "sm",
+                        "action": {
+                          "type": "message",
+                          "label": "百貨專櫃",
+                          "text": "送至百貨專櫃"
+                        },
+                        "color": "#46A3FF"
+                      },
+                      {
+                        "type": "button",
+                        "style": "primary",
+                        "height": "sm",
+                        "action": {
+                          "type": "message",
+                          "label": "到府收貨",
+                          "text": "請人員到府收貨"
+                        },
+                        "color": "#46A3FF"
+                      },
+                      {
+                        "type": "button",
+                        "style": "primary",
+                        "height": "sm",
+                        "action": {
+                          "type": "message",
+                          "label": "自行送修",
+                          "text": "自行送修"
+                        },
+                        "color": "#46A3FF"
+                      },
+                      {
+                        "type": "box",
+                        "layout": "vertical",
+                        "contents": [],
+                        "margin": "sm"
+                      }
+                    ],
+                    "flex": 0
+                  },
+                  "direction": "ltr"
+                }
+                ship_json_str = json.dumps(ship_json)
                 line_bot_api.reply_message(
                     ReplyMessageRequest(
                         reply_token=event.reply_token,
-                        messages=[template_message]
+                        messages=[FlexMessage(alt_text='送修方式', contents = FlexContainer.from_json(ship_json_str))]
                     )
                 )
                 user_states[user_id]["step"] = 2
         
         elif step == 2:
             if '百貨' in text:
-                ship_template = ButtonsTemplate(
-                title='百貨專櫃',
-                text='分店資訊',
-                actions=[
-                    MessageAction(label='SOGO天母店', text='臺北SOGO天母店'),
-                    MessageAction(label='SOGO忠孝店', text='臺北SOGO忠孝店'),
-                    MessageAction(label='遠東信義A13', text='臺北遠東信義A13'),
-                    MessageAction(label='SOGO高雄店', text='高雄SOGO高雄店')
-                    ]
-                )
-                template_message = TemplateMessage(
-                    alt_text='選擇分店',
-                    template=ship_template
-                )
+                shopinfo_json = {
+                  "type": "bubble",
+                  "size": "kilo",
+                  "body": {
+                    "type": "box",
+                    "layout": "vertical",
+                    "contents": [
+                      {
+                        "type": "text",
+                        "text": "百貨專櫃",
+                        "weight": "bold",
+                        "size": "xl"
+                      },
+                      {
+                        "type": "box",
+                        "layout": "vertical",
+                        "margin": "lg",
+                        "spacing": "sm",
+                        "contents": [
+                          {
+                            "type": "box",
+                            "layout": "baseline",
+                            "spacing": "sm",
+                            "contents": [
+                              {
+                                "type": "text",
+                                "text": "分店資訊",
+                                "color": "#aaaaaa",
+                                "size": "sm",
+                                "flex": 1
+                              }
+                            ]
+                          }
+                        ]
+                      }
+                    ],
+                    "spacing": "xs"
+                  },
+                  "footer": {
+                    "type": "box",
+                    "layout": "vertical",
+                    "spacing": "sm",
+                    "contents": [
+                      {
+                        "type": "button",
+                        "style": "primary",
+                        "height": "sm",
+                        "action": {
+                          "type": "message",
+                          "label": "SOGO天母店",
+                          "text": "臺北SOGO天母店"
+                        },
+                        "color": "#46A3FF"
+                      },
+                      {
+                        "type": "button",
+                        "style": "primary",
+                        "height": "sm",
+                        "action": {
+                          "type": "message",
+                          "label": "SOGO忠孝店",
+                          "text": "臺北SOGO忠孝店"
+                        },
+                        "color": "#46A3FF"
+                      },
+                      {
+                        "type": "button",
+                        "style": "primary",
+                        "height": "sm",
+                        "action": {
+                          "type": "message",
+                          "label": "遠東信義A13",
+                          "text": "臺北遠東信義A13"
+                        },
+                        "color": "#46A3FF"
+                      },
+                      {
+                        "type": "button",
+                        "style": "primary",
+                        "height": "sm",
+                        "action": {
+                          "type": "message",
+                          "label": "SOGO高雄店",
+                          "text": "高雄SOGO高雄店"
+                        },
+                        "color": "#46A3FF"
+                      },
+                      {
+                        "type": "box",
+                        "layout": "vertical",
+                        "contents": [],
+                        "margin": "sm"
+                      }
+                    ],
+                    "flex": 0
+                  },
+                  "direction": "ltr"
+                }
+                shopinfo_json_str = json.dumps(shopinfo_json)
                 line_bot_api.reply_message(
                     ReplyMessageRequest(
                         reply_token=event.reply_token,
-                        messages=[template_message]
+                        messages=[FlexMessage(alt_text='分店資訊', contents = FlexContainer.from_json(shopinfo_json_str))]
                     )
                 )
                 user_states[user_id]["step"] = 3
