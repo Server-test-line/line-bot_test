@@ -136,12 +136,6 @@ def handle_message(event):
                         "color": "#46A3FF",
                         "margin": "none"
                     },
-                    {
-                        "type": "box",
-                        "layout": "vertical",
-                        "contents": [],
-                        "margin": "sm"
-                    }
                     ],
                     "flex": 0
                 }
